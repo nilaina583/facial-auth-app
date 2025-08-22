@@ -71,7 +71,8 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Connexions aujourd'hui</CardTitle>
+            <CardTitle className="text-lg">Connexions aujourd&apos;hui</CardTitle>
+
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-green-600">1</p>
