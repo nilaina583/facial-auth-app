@@ -19,7 +19,6 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
   const [faceDetected, setFaceDetected] = useState(false)
   const [demoMode, setDemoMode] = useState(false)
 
-  // Initialiser la caméra
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -30,17 +29,15 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
         videoRef.current.srcObject = stream
         videoRef.current.onloadedmetadata = () => {
           setIsVideoReady(true)
-          // Démarrer la détection une fois la vidéo prête
           setTimeout(detectFaceInVideo, 1000)
         }
       }
     } catch (err) {
-      setError('Impossible d\'accéder à la caméra')
-      console.error('Erreur caméra:', err)
+      setError("Impossible d'accéder à la caméra")
+      console.error("Erreur caméra:", err)
     }
   }
 
-  // Arrêter la caméra
   const stopCamera = () => {
     if (videoRef.current?.srcObject) {
       const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
@@ -50,7 +47,6 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
     }
   }
 
-  // Fonction pour détecter les visages en temps réel
   const detectFaceInVideo = async () => {
     if (!videoRef.current || !isVideoReady) return
 
@@ -59,22 +55,20 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
       setFaceDetected(!!detection)
       
       if (detection) {
-        console.log('Visage détecté:', detection.detection.score)
+        console.log("Visage détecté:", detection.detection.score)
       }
     } catch (error) {
-      console.error('Erreur détection:', error)
+      console.error("Erreur détection:", error)
     }
 
-    // Répéter la détection toutes les 100ms
     if (isVideoReady) {
       setTimeout(detectFaceInVideo, 100)
     }
   }
 
-  // Authentification avec détection faciale réelle
   const handleAuth = async () => {
     if (!videoRef.current || !isVideoReady) {
-      toast.error('Caméra non prête')
+      toast.error("Caméra non prête")
       return
     }
 
@@ -90,8 +84,8 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
         toast.error(result.message)
       }
     } catch (error) {
-      console.error('Erreur authentification:', error)
-      toast.error('Erreur lors de l\'authentification')
+      console.error("Erreur authentification:", error)
+      toast.error("Erreur lors de l'authentification")
     } finally {
       setIsLoading(false)
     }
@@ -99,7 +93,7 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
 
   useEffect(() => {
     return () => {
-      stopCamera() // Nettoyage à la fermeture du composant
+      stopCamera()
     }
   }, [])
 
@@ -152,11 +146,10 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
             variant="outline"
             className="mb-2"
           >
-            {demoMode ? 'Mode Normal' : 'Mode Démo (sans caméra)'}
+            {demoMode ? "Mode Normal" : "Mode Démo (sans caméra)"}
           </Button>
           
           {!demoMode ? (
-            // Mode normal avec caméra
             <>
               {!isVideoReady ? (
                 <Button onClick={startCamera} className="flex-1">
@@ -169,7 +162,7 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
                     disabled={isLoading}
                     className="flex-1"
                   >
-                    {isLoading ? 'Authentification...' : 'S\'authentifier'}
+                    {isLoading ? "Authentification..." : "S'authentifier"}
                   </Button>
                   <Button 
                     onClick={stopCamera} 
@@ -181,18 +174,16 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
               )}
             </>
           ) : (
-            // Mode démo
             <Button 
               onClick={() => {
                 setIsLoading(true)
-                toast.success('Mode démo activé!')
+                toast.success("Mode démo activé!")
                 setTimeout(() => {
                   setIsLoading(false)
-                  // Utiliser le premier utilisateur de test pour le démo
                   const demoUser = {
-                    id: 'demo',
-                    name: 'Utilisateur Démo',
-                    email: 'demo@example.com',
+                    id: "demo",
+                    name: "Utilisateur Démo",
+                    email: "demo@example.com",
                     faceDescriptor: [],
                     createdAt: new Date().toISOString()
                   }
@@ -202,7 +193,7 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
               disabled={isLoading}
               className="flex-1"
             >
-              {isLoading ? 'Authentification démo...' : 'Tester authentification'}
+              {isLoading ? "Authentification démo..." : "Tester authentification"}
             </Button>
           )}
         </div>

@@ -15,14 +15,12 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   const [allUsers, setAllUsers] = useState<User[]>([])
 
   useEffect(() => {
-    // Charger tous les utilisateurs pour affichage
     const users = Database.getUsers()
     setAllUsers(users)
   }, [])
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Tableau de Bord</h1>
         <Button onClick={onLogout} variant="outline">
@@ -30,7 +28,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         </Button>
       </div>
 
-      {/* Informations utilisateur connecté */}
       <Card>
         <CardHeader>
           <CardTitle>👋 Bienvenue, {user.name} !</CardTitle>
@@ -58,7 +55,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         </CardContent>
       </Card>
 
-      {/* Statistiques */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader>
@@ -72,7 +68,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Connexions aujourd&apos;hui</CardTitle>
-
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-green-600">1</p>
@@ -89,7 +84,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         </Card>
       </div>
 
-      {/* Liste des utilisateurs */}
       <Card>
         <CardHeader>
           <CardTitle>Utilisateurs du système</CardTitle>
