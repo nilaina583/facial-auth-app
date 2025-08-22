@@ -33,7 +33,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       {/* Informations utilisateur connecté */}
       <Card>
         <CardHeader>
-          <CardTitle>👋 Bienvenue, {user.name}!</CardTitle>
+          <CardTitle>👋 Bienvenue, {user.name} !</CardTitle>
           <CardDescription>
             Authentification faciale réussie
           </CardDescription>
