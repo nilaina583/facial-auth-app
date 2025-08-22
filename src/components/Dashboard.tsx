@@ -51,7 +51,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
             <div>
               <p className="text-sm text-gray-500">Dernière connexion</p>
               <p className="font-medium">
-                {new Date().toLocaleDateString('fr-FR')} à {new Date().toLocaleTimeString('fr-FR')}
+                {new Date().toLocaleDateString()} à {new Date().toLocaleTimeString()}
               </p>
             </div>
           </div>
@@ -116,7 +116,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500">
-                    Inscrit le {new Date(u.createdAt).toLocaleDateString('fr-FR')}
+                    Inscrit le {new Date(u.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
