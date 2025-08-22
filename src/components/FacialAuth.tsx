@@ -3,11 +3,12 @@
 import { useRef, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { detectFace } from '@/lib/faceRecognition'
+import { detectFace, authenticateUser } from '@/lib/faceRecognition'
 import { toast } from 'sonner'
+import { User } from '@/lib/types'
 
 interface FacialAuthProps {
-  onAuthSuccess: (userName: string) => void
+  onAuthSuccess: (user: User) => void
 }
 
 export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
@@ -16,6 +17,7 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
   const [isVideoReady, setIsVideoReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [faceDetected, setFaceDetected] = useState(false)
+  const [demoMode, setDemoMode] = useState(false)
 
   // Initialiser la caméra
   const startCamera = async () => {
@@ -79,23 +81,13 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
     setIsLoading(true)
     
     try {
-      const detection = await detectFace(videoRef.current)
+      const result = await authenticateUser(videoRef.current)
       
-      if (!detection) {
-        toast.error('Aucun visage détecté')
-        setIsLoading(false)
-        return
-      }
-
-      // Simulation d'une comparaison avec la base de données
-      const confidence = detection.detection.score
-      console.log('Score de confiance:', confidence)
-      
-      if (confidence > 0.7) {
-        toast.success('Authentification réussie!')
-        onAuthSuccess('Utilisateur Reconnu')
+      if (result.success && result.user) {
+        toast.success(result.message)
+        onAuthSuccess(result.user)
       } else {
-        toast.error('Visage non reconnu')
+        toast.error(result.message)
       }
     } catch (error) {
       console.error('Erreur authentification:', error)
@@ -154,27 +146,64 @@ export default function FacialAuth({ onAuthSuccess }: FacialAuthProps) {
           <div className="text-red-500 text-sm">{error}</div>
         )}
 
-        <div className="flex gap-2">
-          {!isVideoReady ? (
-            <Button onClick={startCamera} className="flex-1">
-              Activer la caméra
-            </Button>
-          ) : (
+        <div className="flex gap-2 flex-col">
+          <Button 
+            onClick={() => setDemoMode(!demoMode)} 
+            variant="outline"
+            className="mb-2"
+          >
+            {demoMode ? 'Mode Normal' : 'Mode Démo (sans caméra)'}
+          </Button>
+          
+          {!demoMode ? (
+            // Mode normal avec caméra
             <>
-              <Button 
-                onClick={handleAuth} 
-                disabled={isLoading}
-                className="flex-1"
-              >
-                {isLoading ? 'Authentification...' : 'S\'authentifier'}
-              </Button>
-              <Button 
-                onClick={stopCamera} 
-                variant="outline"
-              >
-                Arrêter
-              </Button>
+              {!isVideoReady ? (
+                <Button onClick={startCamera} className="flex-1">
+                  Activer la caméra
+                </Button>
+              ) : (
+                <>
+                  <Button 
+                    onClick={handleAuth} 
+                    disabled={isLoading}
+                    className="flex-1"
+                  >
+                    {isLoading ? 'Authentification...' : 'S\'authentifier'}
+                  </Button>
+                  <Button 
+                    onClick={stopCamera} 
+                    variant="outline"
+                  >
+                    Arrêter
+                  </Button>
+                </>
+              )}
             </>
+          ) : (
+            // Mode démo
+            <Button 
+              onClick={() => {
+                setIsLoading(true)
+                toast.success('Mode démo activé!')
+                setTimeout(() => {
+                  setIsLoading(false)
+                  // Utiliser le premier utilisateur de test pour le démo
+                  const demoUser = {
+                    id: 'demo',
+                    name: 'Utilisateur Démo',
+                    email: 'demo@example.com',
+                    faceDescriptor: [],
+                    createdAt: new Date().toISOString()
+                  }
+                  onAuthSuccess(demoUser)
+                }, 2000)
+              }}
+              disabled={isLoading}
+              className="flex-1"
+            >
+              {isLoading ? 'Authentification démo...' : 'Tester authentification'}
+            </Button>
           )}
         </div>
       </CardContent>
